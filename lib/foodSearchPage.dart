@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:elastic_client/console_http_transport.dart';
-import 'package:elastic_client/elastic_client.dart' as elastic;
-
 import 'package:nutritionary/foodInfoPage.dart';
+import 'package:nutritionary/foodEntry.dart';
 
 class FoodSearchPage extends StatefulWidget {
   FoodSearchPage({Key key}) : super(key: key);
@@ -15,14 +13,14 @@ class FoodSearchPage extends StatefulWidget {
 }
 
 class _FoodSearchState extends State<FoodSearchPage> {
-  List<String> _searchResult = List<String>();
+  List<FoodEntry> _searchResult = List<FoodEntry>();
   final TextEditingController _searchQuery = new TextEditingController();
   Timer _debounce;
 
   Future<void> _onSearchChanged() async {
     if (_debounce?.isActive ?? false) _debounce.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () async {
-      List<String> result = await elasticQuery(_searchQuery.text);
+      List<FoodEntry> result = await FoodEntry.searchByName(_searchQuery.text);
       setState(() {
         _searchResult = result;
       });
@@ -59,17 +57,17 @@ class _FoodSearchState extends State<FoodSearchPage> {
                 decoration:
                     InputDecoration(hintText: 'Search incredient or recipe')),
             ListView(shrinkWrap: true, children: <Widget>[
-              for (String entry in _searchResult)
+              for (FoodEntry entry in _searchResult)
                 GestureDetector(
                     onLongPress: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FoodInfoPage(entry)));
+                              builder: (context) => FoodInfoPage(entry.name)));
                     },
                     child: Card(
                         child: ListTile(
-                            leading: FlutterLogo(), title: Text(entry))))
+                            leading: FlutterLogo(), title: Text(entry.name))))
             ]),
           ],
         ),
@@ -78,18 +76,19 @@ class _FoodSearchState extends State<FoodSearchPage> {
   }
 }
 
-Future<List<String>> elasticQuery(String query) async {
-  ConsoleHttpTransport _transport =
-      new ConsoleHttpTransport(Uri.parse('http://localhost:9200/'));
-  Client _client = new elastic.Client(_transport);
-  List<String> results = List<String>();
+// Future<List<String>> elasticQuery(String query) async {
+//   ConsoleHttpTransport _transport =
+//       new ConsoleHttpTransport(Uri.parse('http://localhost:9200/'));
+//   Client _client = new elastic.Client(_transport);
+//   List<String> results = List<String>();
 
-  SearchResult queryResult = await _client.search(
-      'foods', '', elastic.Query.match('Name', query),
-      source: ['Name']);
-  for (dynamic entry in queryResult.toMap()['hits']) {
-    results.add(entry['doc']['Name']);
-  }
-  _transport.close();
-  return results;
-}
+//   SearchResult queryResult = await _client.search(
+//       'foods', '_doc', elastic.Query.match('Name', query), source: []);
+//   for (dynamic entry in queryResult.toMap()['hits']) {
+//     results.add(entry['doc']['Name']);
+//     print(entry);
+//     //entry['doc'].forEach((k,v) => print('double _${k.toLowerCase()} =  -1.0;'));
+//   }
+//   _transport.close();
+//   return results;
+// }
