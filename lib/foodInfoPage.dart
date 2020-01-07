@@ -5,11 +5,11 @@ import 'package:nutritionary/foodSearchComparisionPage.dart';
 class FoodInfoPage extends StatelessWidget {
 
   FoodEntry _entry;
-  List<String> _ingredientNames;
+  List<String> _nutrientNames;
 
   FoodInfoPage(FoodEntry entry) {
     _entry = entry;
-    _ingredientNames = entry.ingredientNames;
+    _nutrientNames = entry.nutrientNames;
   }
   @override
   Widget build(BuildContext context) {
@@ -24,12 +24,16 @@ class FoodInfoPage extends StatelessWidget {
         alignment: Alignment.topLeft,
         child: ListView.builder(
             padding: const EdgeInsets.all(8),
-            itemCount: _ingredientNames.length,
+            itemCount: _nutrientNames.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 height: 50,
                 //color: Colors.amber[colorCodes[index]],
-                child: Center(child: Text('${_ingredientNames[index]} – ${_entry.ingredientAmount(_ingredientNames[index])}')));
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                  Container(width:200.0, child:Text('${_nutrientNames[index]}')), 
+                  Text('${_entry.nutrientAmount(_nutrientNames[index])}')]));
             })
         ),
         floatingActionButton: FloatingActionButton(

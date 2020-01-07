@@ -6,7 +6,7 @@ class FoodEntry{
   int _id = -1;
   String _category = "";
   String _name = "";
-  Map<String, double> _ingredients = new Map<String,double>();
+  Map<String, double> _nutrients = new Map<String,double>();
 
   
 
@@ -22,7 +22,7 @@ class FoodEntry{
     SearchResult queryResult = await _client.search('foods', '_doc', elastic.Query.match('Name', name), source: []);
     for (dynamic entry in queryResult.toMap()['hits']) {
       FoodEntry food = new FoodEntry(int.parse(entry['_id']), entry['doc']['Name']);
-      entry['doc'].forEach((k,v) => food.addIngredient((k).toString(), (v).toString()));
+      entry['doc'].forEach((k,v) => food.addNutrient((k).toString(), (v).toString()));
       //entry['doc'].forEach((k,v) => print('${k}:${v}'));
       entries.add(food);
       
@@ -37,17 +37,17 @@ class FoodEntry{
     return _name;
   }
 
-  List<String> get ingredientNames {
-    return _ingredients.keys.toList();
+  List<String> get nutrientNames {
+    return _nutrients.keys.toList();
   }
 
-  double ingredientAmount(String key) {
-    return _ingredients[key];
+  double nutrientAmount(String key) {
+    return _nutrients[key];
   }
 
-  void addIngredient(String name, String amount) {
+  void addNutrient(String name, String amount) {
     try{
-      _ingredients[name] = double.parse(amount);
+      _nutrients[name] = double.parse(amount);
     }
     on FormatException
     {
@@ -55,7 +55,7 @@ class FoodEntry{
     }
   }
 
-  int numberIngredients() {
-    return _ingredients.length;
+  int numberNutrients() {
+    return _nutrients.length;
   }
 }
