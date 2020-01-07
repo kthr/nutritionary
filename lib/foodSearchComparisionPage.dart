@@ -2,17 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:nutritionary/foodInfoPage.dart';
 import 'package:nutritionary/foodEntry.dart';
+import 'package:nutritionary/foodComparisionPage.dart';
 
-class FoodSearchPage extends StatefulWidget {
-  FoodSearchPage({Key key}) : super(key: key);
+class FoodSearchComparisionPage extends StatefulWidget {
+  
+  FoodSearchComparisionPage(this._entry, {Key key}) : super(key: key) {
+  }
+
+  final FoodEntry _entry;
+
+  FoodEntry get entry {
+    return _entry;
+  }
 
   @override
   _FoodSearchState createState() => _FoodSearchState();
 }
 
-class _FoodSearchState extends State<FoodSearchPage> {
+class _FoodSearchState extends State<FoodSearchComparisionPage> {
   List<FoodEntry> _searchResult = List<FoodEntry>();
   final TextEditingController _searchQuery = new TextEditingController();
   Timer _debounce;
@@ -46,7 +54,7 @@ class _FoodSearchState extends State<FoodSearchPage> {
       appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text('What did I eat today?')),
+          title: Text('Compare "${widget._entry.name}" with?')),
       body: Align(
         alignment: Alignment.topLeft,
         child: Column(
@@ -63,7 +71,7 @@ class _FoodSearchState extends State<FoodSearchPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FoodInfoPage(entry)));
+                              builder: (context) => FoodComparisionPage(this.widget._entry,entry)));
                     },
                     child: Card(
                         child: ListTile(
