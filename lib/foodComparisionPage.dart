@@ -3,15 +3,11 @@ import 'package:nutritionary/foodEntry.dart';
 
 class FoodComparisionPage extends StatelessWidget {
 
-  FoodComparisionPage(FoodEntry entry1, FoodEntry entry2) {
-    _entry1 = entry1;
-    _entry2 = entry2;
-    _nutrientNames = _entry1.nutrientNames;
-  }
+  FoodComparisionPage(this._entry1,  this._entry2) : _nutrientNames = _entry1.nutrientNames;
 
-  FoodEntry _entry1;
-  FoodEntry _entry2;
-  List<String> _nutrientNames;
+  final FoodEntry _entry1, 
+                  _entry2;
+  final List<String> _nutrientNames;
 
   @override
   Widget build(BuildContext context) {

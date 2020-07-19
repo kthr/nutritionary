@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:nutritionary/foodInfoPage.dart';
 import 'package:nutritionary/foodEntry.dart';
+import 'package:nutritionary/query.dart';
 
 class FoodSearchPage extends StatefulWidget {
   FoodSearchPage({Key key}) : super(key: key);
@@ -13,6 +14,7 @@ class FoodSearchPage extends StatefulWidget {
 }
 
 class _FoodSearchState extends State<FoodSearchPage> {
+  QuerySingleton query = QuerySingleton();
   List<FoodEntry> _searchResult = List<FoodEntry>();
   final TextEditingController _searchQuery = new TextEditingController();
   Timer _debounce;
@@ -20,7 +22,8 @@ class _FoodSearchState extends State<FoodSearchPage> {
   Future<void> _onSearchChanged() async {
     if (_debounce?.isActive ?? false) _debounce.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () async {
-      List<FoodEntry> result = await FoodEntry.searchByName(_searchQuery.text);
+      
+      List<FoodEntry> result = await query.queryNames(_searchQuery.text);
       setState(() {
         _searchResult = result;
       });
@@ -56,39 +59,25 @@ class _FoodSearchState extends State<FoodSearchPage> {
                 controller: _searchQuery,
                 decoration:
                     InputDecoration(hintText: 'Search incredient or recipe')),
-            ListView(shrinkWrap: true, children: <Widget>[
+            Expanded(
+              child : ListView(shrinkWrap: true, children: <Widget>[
               for (FoodEntry entry in _searchResult)
                 GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      FoodEntry result = await query.queryFoodEntryByID(entry.id);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FoodInfoPage(entry)));
+                              builder: (context) => FoodInfoPage(result)));
                     },
                     child: Card(
                         child: ListTile(
                             leading: FlutterLogo(), title: Text(entry.name))))
-            ]),
+              ])
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-// Future<List<String>> elasticQuery(String query) async {
-//   ConsoleHttpTransport _transport =
-//       new ConsoleHttpTransport(Uri.parse('http://localhost:9200/'));
-//   Client _client = new elastic.Client(_transport);
-//   List<String> results = List<String>();
-
-//   SearchResult queryResult = await _client.search(
-//       'foods', '_doc', elastic.Query.match('Name', query), source: []);
-//   for (dynamic entry in queryResult.toMap()['hits']) {
-//     results.add(entry['doc']['Name']);
-//     print(entry);
-//     //entry['doc'].forEach((k,v) => print('double _${k.toLowerCase()} =  -1.0;'));
-//   }
-//   _transport.close();
-//   return results;
-// }

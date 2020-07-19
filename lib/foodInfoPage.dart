@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:nutritionary/foodComparisionPage.dart';
 import 'package:nutritionary/foodEntry.dart';
 import 'package:nutritionary/foodSearchComparisionPage.dart';
 
 class FoodInfoPage extends StatelessWidget {
 
-  FoodEntry _entry;
-  List<String> _nutrientNames;
+  final FoodEntry _entry;
+  final List<String> _nutrientNames;
 
-  FoodInfoPage(FoodEntry entry) {
-    _entry = entry;
-    _nutrientNames = entry.nutrientNames;
-  }
+  FoodInfoPage(this._entry) : _nutrientNames = _entry.nutrientNames;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +28,20 @@ class FoodInfoPage extends StatelessWidget {
               return Container(
                 height: 50,
                 //color: Colors.amber[colorCodes[index]],
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                  Container(width:200.0, child:Text('${_nutrientNames[index]}')), 
-                  Text('${_entry.nutrientAmount(_nutrientNames[index])}')]));
+                child: Dismissible(
+                  key: Key(_nutrientNames[index]),
+                  background: Text("Less\n${_nutrientNames[index]}", textAlign: TextAlign.left, softWrap: true),
+                  secondaryBackground: Text("More\n${_nutrientNames[index]}", textAlign: TextAlign.right),
+                  confirmDismiss: (direction) async {
+                    if(direction == DismissDirection.endToStart) {
+                      FoodSearchComparisionPage page = FoodSearchComparisionPage(_entry);
+                    }
+                  },
+                  child: ListTile(
+                    title: Text('${_nutrientNames[index]} – ${_entry.nutrientAmount(_nutrientNames[index])}')         
+                  )
+                )
+              );
             })
         ),
         floatingActionButton: FloatingActionButton(

@@ -13,16 +13,12 @@ class FoodSearchComparisionPage extends StatefulWidget {
   final FoodEntry _entry;
   final bool _searchEnabled;
 
-  FoodEntry get entry {
-    return _entry;
-  }
-
   @override
   _FoodSearchState createState() => _FoodSearchState();
 }
 
 class _FoodSearchState extends State<FoodSearchComparisionPage> {
-  QuerySingleton query = QuerySingleton();
+  
   List<FoodEntry> _searchResult = List<FoodEntry>();
   final TextEditingController _searchQuery = new TextEditingController();
   Timer _debounce;
@@ -53,6 +49,7 @@ class _FoodSearchState extends State<FoodSearchComparisionPage> {
 
   @override
   Widget build(BuildContext context) {
+    QuerySingleton query = QuerySingleton();
     return Scaffold(
       appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
